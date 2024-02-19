@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, IntegerField, DateField, DecimalField
 from wtforms.validators import DataRequired
-
+from datetime import datetime
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -18,7 +18,7 @@ class Product(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    date_receipt = db.Column(db.Date, nullable=False)
+    date_receipt = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     price = db.Column(db.Float, nullable=False)
 
 class ProductForm(FlaskForm):
@@ -76,13 +76,13 @@ def product_update(id):
         product.name = request.form['name']
         product.description = request.form['description']
         product.quantity = request.form['quantity']
-        product.date_receipt = request.form['date_receipt']  
+        product.date_receipt = datetime.strptime(request.form['date_receipt'], '%Y-%m-%d')
         product.price = request.form['price']
         try:            
             db.session.commit()
             return redirect(url_for('index'))
-        except:
-            return "При изменении товара произошла ошибка!!!"
+        except Exception as e:
+           return f"При изменении товара произошла ошибка: {str(e)}"
     else:
         
         return render_template("product_update.html", product=product, form=form)
