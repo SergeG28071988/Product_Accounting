@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, IntegerField, DateField, DecimalField
 from wtforms.validators import DataRequired
-from datetime import datetime
+from datetime import datetime, timezone
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -18,7 +18,7 @@ class Product(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    date_receipt = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_receipt = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
     price = db.Column(db.Float, nullable=False)
 
 class ProductForm(FlaskForm):
